@@ -32,18 +32,14 @@ class Code
   def check_code(guess)
     temp_code = String.new(code)
     4.times do |i|
-      if guess[i] == temp_code[i] && guess[i].to_i != 0
-        guess[i] = temp_code[i] = 'c'
-      end
+      guess[i] = temp_code[i] = 'c' if guess[i] == temp_code[i] && guess[i].to_i != 0
     end
     4.times do |i|
       4.times do |j|
-        if guess[i] == temp_code[j] && guess[i].to_i != 0
-          guess[i] = temp_code[j] = 'p'
-        end
+        guess[i] = temp_code[j] = 'p' if guess[i] == temp_code[j] && guess[i].to_i != 0
       end
     end
-    return [guess.count('c'), guess.count('p')]
+    [guess.count('c'), guess.count('p')]
   end
 end
 
@@ -63,6 +59,7 @@ class Game
   end
 
   def play_human
+    win = false
     12.times do |i|
       guess = ''
       loop do
@@ -77,10 +74,11 @@ class Game
       puts "There are #{partially_correct} correct numbers in incorrect positions."
       if correct == 4
         game_over_message(:win)
-        return
+        win = true
+        break
       end
     end
-    game_over_message
+    game_over_message if win == false
   end
 
   def play_computer
