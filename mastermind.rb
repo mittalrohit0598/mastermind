@@ -58,6 +58,24 @@ class Game
     play_computer if code_setter == 'c'
   end
 
+  def play_computer
+    win = false
+    12.times do |i|
+      guess = computer.set_code
+      puts "Computer's guess number #{i + 1}(4 digits between 1 - 5) is #{guess}"
+      correct, partially_correct = code.check_code(guess)
+      puts "There are #{correct} correct numbers in correct positions."
+      puts "There are #{partially_correct} correct numbers in incorrect positions."
+      if correct == 4
+        game_over_message(:win)
+        win = true
+        break
+      end
+      puts
+    end
+    game_over_message if win == false
+  end
+
   def play_human
     win = false
     12.times do |i|
@@ -77,11 +95,9 @@ class Game
         win = true
         break
       end
+      puts
     end
     game_over_message if win == false
-  end
-
-  def play_computer
   end
 
   def set_code
