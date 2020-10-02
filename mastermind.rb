@@ -24,11 +24,26 @@ end
 
 # class Code
 class Code
+  attr_reader :code
   def initialize(code)
     @code = code
   end
 
-  def check_code
+  def check_code(guess)
+    temp_code = String.new(code)
+    4.times do |i|
+      if guess[i] == temp_code[i] && guess[i].to_i != 0
+        guess[i] = temp_code[i] = 'c'
+      end
+    end
+    4.times do |i|
+      4.times do |j|
+        if guess[i] == temp_code[j] && guess[i].to_i != 0
+          guess[i] = temp_code[j] = 'p'
+        end
+      end
+    end
+    return [guess.count('c'), guess.count('p')]
   end
 end
 
@@ -39,13 +54,36 @@ class Game
     @human = human
     @computer = computer
     @code_setter = ''
-    @code = set_code
+    @code = Code.new(set_code)
   end
 
   def play
+    play_human if code_setter == 'g'
+    play_computer if code_setter == 'c'
   end
 
-  def move
+  def play_human
+    12.times do |i|
+      guess = ''
+      loop do
+        puts "Make guess number #{i + 1}(4 digits between 1 - 5):"
+        guess = gets.chomp
+        break if valid_code?(guess)
+
+        puts 'Invalid input! Try again.'
+      end
+      correct, partially_correct = code.check_code(guess)
+      puts "There are #{correct} correct numbers in correct positions."
+      puts "There are #{partially_correct} correct numbers in incorrect positions."
+      if correct == 4
+        game_over_message(:win)
+        return
+      end
+    end
+    game_over_message
+  end
+
+  def play_computer
   end
 
   def set_code
@@ -73,7 +111,12 @@ class Game
     code.split('').all? { |digit| digit.to_i <= 5 && digit.to_i >= 1 } && code.length == 4
   end
 
-  def game_over_message
+  def game_over_message(result = :lose)
+    if result == :win
+      puts 'Congratulations! You guessed the secret code.'
+    else
+      puts 'You couldn\'t guess the code. Better luck next time.'
+    end
   end
 end
 
