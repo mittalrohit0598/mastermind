@@ -28,7 +28,7 @@ end
 # class Computer
 class Computer < Player
   include CheckCode
-  
+
   attr_accessor :candidates
   def initialize(name)
     super
@@ -48,9 +48,7 @@ class Computer < Player
     5.times do |a|
       5.times do |b|
         5.times do |c|
-          5.times do |d|
-            candidates << "#{a + 1}#{b + 1}#{c + 1}#{d + 1}"
-          end
+          5.times { |d| candidates << "#{a + 1}#{b + 1}#{c + 1}#{d + 1}" }
         end
       end
     end
