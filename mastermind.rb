@@ -1,4 +1,21 @@
-# frozen_string_literal: true
+# frozen_string_literal: false
+
+# module CheckCode
+module CheckCode
+  def check_code(guess, code)
+    temp_code = String.new(code)
+    temp_guess = String.new(guess)
+    4.times do |i|
+      temp_guess[i] = temp_code[i] = 'c' if temp_guess[i] == temp_code[i] && temp_guess[i].to_i != 0
+    end
+    4.times do |i|
+      4.times do |j|
+        temp_guess[i] = temp_code[j] = 'p' if temp_guess[i] == temp_code[j] && temp_guess[i].to_i != 0
+      end
+    end
+    [temp_guess.count('c'), temp_guess.count('p')]
+  end
+end
 
 # class Player
 class Player
@@ -10,7 +27,34 @@ end
 
 # class Computer
 class Computer < Player
-  def make_move
+  include CheckCode
+  
+  attr_accessor :candidates
+  def initialize(name)
+    super
+    @candidates = possible_candidates
+  end
+
+  def make_move(previous_guess, code)
+    temp_code = String.new(code)
+    candidates.each do |candidate|
+      candidates.delete(candidate) if check_code(previous_guess, candidate) != check_code(previous_guess, temp_code)
+    end
+    candidates[0]
+  end
+
+  def possible_candidates
+    candidates = []
+    5.times do |a|
+      5.times do |b|
+        5.times do |c|
+          5.times do |d|
+            candidates << "#{a + 1}#{b + 1}#{c + 1}#{d + 1}"
+          end
+        end
+      end
+    end
+    candidates
   end
 
   def set_code
@@ -28,23 +72,12 @@ class Code
   def initialize(code)
     @code = code
   end
-
-  def check_code(guess)
-    temp_code = String.new(code)
-    4.times do |i|
-      guess[i] = temp_code[i] = 'c' if guess[i] == temp_code[i] && guess[i].to_i != 0
-    end
-    4.times do |i|
-      4.times do |j|
-        guess[i] = temp_code[j] = 'p' if guess[i] == temp_code[j] && guess[i].to_i != 0
-      end
-    end
-    [guess.count('c'), guess.count('p')]
-  end
 end
 
 # class Game
 class Game
+  include CheckCode
+
   attr_accessor :human, :computer, :code_setter, :code
   def initialize(human = Player.new('Human'), computer = Computer.new('Computer'))
     @human = human
@@ -60,10 +93,11 @@ class Game
 
   def play_computer
     win = false
+    guess = '1122'
     12.times do |i|
-      guess = computer.set_code
+      guess = computer.make_move(guess, code.code) unless i.zero?
       puts "Computer's guess number #{i + 1}(4 digits between 1 - 5) is #{guess}"
-      correct, partially_correct = code.check_code(guess)
+      correct, partially_correct = check_code(guess, code.code)
       puts "There are #{correct} correct numbers in correct positions."
       puts "There are #{partially_correct} correct numbers in incorrect positions."
       if correct == 4
@@ -87,7 +121,7 @@ class Game
 
         puts 'Invalid input! Try again.'
       end
-      correct, partially_correct = code.check_code(guess)
+      correct, partially_correct = check_code(guess, code.code)
       puts "There are #{correct} correct numbers in correct positions."
       puts "There are #{partially_correct} correct numbers in incorrect positions."
       if correct == 4
