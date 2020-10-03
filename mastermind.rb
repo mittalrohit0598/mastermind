@@ -175,9 +175,11 @@ class Game
 
   def game_over_message(result = :lose)
     if result == :win
-      puts 'Congratulations! You guessed the secret code.'
+      puts 'Congratulations! You guessed the secret code.' if code_setter == 'g'
+      puts 'Oops! The computer guessed the secret code. Better luck next time.' if code_setter == 'c'
     else
-      puts 'You couldn\'t guess the code. Better luck next time.'
+      puts 'You couldn\'t guess the code. Better luck next time.' if code_setter == 'g'
+      puts 'Congratulations! The computer couldn\'t guess the secret code.' if code_setter == 'c'
     end
   end
 end
