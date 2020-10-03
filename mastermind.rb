@@ -69,6 +69,16 @@ class Computer < Player
     candidates[0]
   end
 
+  def set_code
+    code = []
+    4.times do
+      code << rand(1..4)
+    end
+    code.join('')
+  end
+
+  private
+
   def possible_candidates
     candidates = []
     5.times do |a|
@@ -79,14 +89,6 @@ class Computer < Player
       end
     end
     candidates
-  end
-
-  def set_code
-    code = []
-    4.times do
-      code << rand(1..4)
-    end
-    code.join('')
   end
 end
 
@@ -123,6 +125,8 @@ class Game
     end
     game_over_message if win == false
   end
+
+  private
 
   def win?(correct)
     if correct == 4
